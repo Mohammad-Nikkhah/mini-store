@@ -3,11 +3,15 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { Input } from "@/src/components/ui/input";
+import { Button } from "@/src/components/ui/button";
+import Map from "@/src/components/ui/Map";
+import { HiOutlineInformationCircle } from "react-icons/hi";
 
 const checkoutSchema = z.object({
   name: z.string().min(1, "نام الزامی است"),
   address: z.string().min(1, "آدرس الزامی است"),
-  postalCode: z.string().length(5, "کد پستی باید ۵ رقم باشد"),
+  postalCode: z.string().length(10, "کد پستی باید ۱۰ رقم باشد"),
   city: z.string().min(1, "شهر الزامی است"),
 });
 
@@ -21,69 +25,71 @@ export default function CheckoutPage() {
   });
 
   const onSubmit = (data: any) => {
-    console.log("فرم ارسال شد:", data);
+    console.log("اطلاعات ارسال شد:", data);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-4">
-        مشخصات خود را وارد کنید
+    <div className="container mx-auto p-10 my-20 rounded-md border-2 border-gray-200 w-fit">
+      <h1 className="text-xl font-bold mb-4 flex  justify-center gap-2 items-center text-center">
+        <HiOutlineInformationCircle className="text-green-500 text-3xl" />
+        اطلاعات را وارد کنید
       </h1>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
           <label className="block mb-1">نام:</label>
-          <input
+          <Input
             {...register("name")}
-            className="border p-2 w-full"
-            placeholder="اسم خود را وارد کنید"
+            placeholder="نام خود را وارد کنید"
+            className="border p-2 w-96"
           />
           {errors.name && (
             <p className="text-red-500">{String(errors.name?.message)}</p>
           )}
         </div>
 
-        <div className="mb-4">
+        <div>
           <label className="block mb-1">آدرس:</label>
-          <input
+          <Input
             {...register("address")}
-            className="border p-2 w-full"
             placeholder="آدرس خود را وارد کنید"
+            className="border p-2 w-96"
           />
           {errors.address && (
             <p className="text-red-500">{String(errors.address?.message)}</p>
           )}
         </div>
 
-        <div className="mb-4">
+        <div>
           <label className="block mb-1">کد پستی:</label>
-          <input
+          <Input
             {...register("postalCode")}
-            className="border p-2 w-full"
             placeholder="کد پستی خود را وارد کنید"
+            className="border p-2 w-96"
           />
           {errors.postalCode && (
             <p className="text-red-500">{String(errors.postalCode?.message)}</p>
           )}
         </div>
 
-        <div className="mb-4">
+        <div>
           <label className="block mb-1">شهر:</label>
-          <input
+          <Input
             {...register("city")}
-            className="border p-2 w-full"
-            placeholder="شهر شما"
+            placeholder="شهر خود را وارد کنید"
+            className="border p-2 w-96"
           />
           {errors.city && (
             <p className="text-red-500">{String(errors.city?.message)}</p>
           )}
         </div>
 
-        <button
-          type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded-lg"
-        >
+        <div>
+          <label className="block mb-1">انتخاب موقعیت مکانی:</label>
+          <Map />
+        </div>
+        <Button type="submit" className="flex justify-center w-full">
           تایید نهایی
-        </button>
+        </Button>
       </form>
     </div>
   );

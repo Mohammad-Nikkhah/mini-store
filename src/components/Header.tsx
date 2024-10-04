@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
 import { FaBasketShopping } from "react-icons/fa6";
+import MenuItems from "./MenuItems";
 
 export default function Header() {
   const { cart } = useCart();
@@ -19,28 +20,18 @@ export default function Header() {
             />
           </Link>
         </div>
-        <div className="menu-box">
-          <ul className="flex gap-5">
-            <li className="text-black hover:text-blue-800 cursor-pointer">
-              لوازم جانبی
-            </li>
-            <li className="text-black hover:text-blue-800 cursor-pointer">
-              لپ تاپ
-            </li>
-            <li className="text-black hover:text-blue-800 cursor-pointer">
-              تلفن همراه
-            </li>
-            <li className="text-black hover:text-blue-800 cursor-pointer">
-              درباره ما
-            </li>
-          </ul>
-        </div>
-
+        <MenuItems />
         <div className="basket-area">
           <Link href="/cart">
-            <span className="text-black flex place-content-center">
-              سبد خرید ({totalItems})
-              <FaBasketShopping />
+            <span className="relative text-black flex place-content-center">
+              <span
+                className="absolute text-sm left-4 bg-blue-900 text-white p-1 flex justify-center
+                ali
+               rounded-full h-5 w-5	items-center	"
+              >
+                <span> {totalItems}</span>
+              </span>
+              <FaBasketShopping className="text-2xl" />
             </span>{" "}
           </Link>
         </div>
