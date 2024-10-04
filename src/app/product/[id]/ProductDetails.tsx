@@ -8,7 +8,14 @@ import {
 } from "../../../components/ui/alert";
 import { useCart } from "@/src/context/CartContext";
 
-export default function ProductDetails({ product }: { product: any }) {
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  image: string;
+}
+export default function ProductDetails({ product }: { product: Product }) {
   const { addToCart } = useCart();
   const [showAlert, setShowAlert] = useState(false);
   const handleAddToCart = () => {

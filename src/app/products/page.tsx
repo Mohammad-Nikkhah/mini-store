@@ -10,6 +10,13 @@ async function getProducts() {
   return response.json();
 }
 
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  image: string;
+}
+
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +40,7 @@ export default function Products() {
         محصولات
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-        {currentProducts.map((product: any) => (
+        {currentProducts.map((product: Product) => (
           <Link href={`/product/${product.id}`} key={product.id}>
             <div className="cursor-pointer w-58 h-48 grid gap-2 grid-cols-2 border p-4 rounded-lg shadow hover:shadow-lg transition duration-300">
               <img src={product.image} className="w-20 h-20 mb-4" />

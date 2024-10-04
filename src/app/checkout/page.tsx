@@ -24,7 +24,7 @@ export default function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: object) => {
     console.log("اطلاعات ارسال شد:", data);
   };
 
