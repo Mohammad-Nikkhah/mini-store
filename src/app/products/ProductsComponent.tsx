@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { MdOutlineFiberNew } from "react-icons/md";
 import { Pagination } from "@/src/components/ui/pagination";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Product {
   id: number;
@@ -19,9 +20,14 @@ interface ProductsComponentProps {
 export default function ProductsComponent({
   products,
 }: ProductsComponentProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
+  const currentPageFromParams = searchParams.get("page")
+    ? parseInt(searchParams.get("page") as string)
+    : 1;
+  const [currentPage, setCurrentPage] = useState(currentPageFromParams);
+  const [isLoading, setIsLoading] = useState(true);
   const productsPerPage = 8;
 
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -36,6 +42,15 @@ export default function ProductsComponent({
       setIsLoading(false);
     }
   }, [products]);
+
+  useEffect(() => {
+    setCurrentPage(currentPageFromParams);
+  }, [currentPageFromParams]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    router.push(`/products?page=${page}`);
+  };
 
   return (
     <div className="container mx-auto text-center p-4">
@@ -68,7 +83,11 @@ export default function ProductsComponent({
           : currentProducts.map((product: Product) => (
               <Link href={`/product/${product.id}`} key={product.id}>
                 <div className="cursor-pointer w-58 h-48 grid gap-2 grid-cols-2 border p-4 rounded-lg shadow hover:shadow-lg transition duration-300">
-                  <img src={product.image} className="w-20 h-20 mb-4" />
+                  <img
+                    src={product.image}
+                    className="w-20 h-20 mb-4"
+                    alt={product.title}
+                  />
                   <h2 className="font-light text-sm">{product.title}</h2>
                   <p className="text-blue-900">${product.price}</p>
                 </div>
@@ -79,7 +98,7 @@ export default function ProductsComponent({
       <Pagination
         currentPage={currentPage}
         totalPages={Math.ceil(products.length / productsPerPage)}
-        onPageChange={setCurrentPage}
+        onPageChange={handlePageChange}
         className="mt-6"
       />
     </div>
