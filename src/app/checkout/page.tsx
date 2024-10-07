@@ -2,20 +2,21 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import Map from "@/src/components/ui/Map";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
-const checkoutSchema = z.object({
-  name: z.string().min(1, "نام الزامی است"),
-  address: z.string().min(1, "آدرس الزامی است"),
-  postalCode: z.string().length(10, "کد پستی باید ۱۰ رقم باشد"),
-  city: z.string().min(1, "شهر الزامی است"),
-});
+import { checkoutSchema } from "./checkoutSchema";
+import { processCheckout } from "./checkoutAction";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function CheckoutPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -23,7 +24,26 @@ export default function CheckoutPage() {
   } = useForm({
     resolver: zodResolver(checkoutSchema),
   });
-  const onSubmit = () => {};
+
+  const onSubmit = async (data: any) => {
+    setLoading(true);
+    setError(error);
+
+    try {
+      const result = await processCheckout(data);
+      if (result.success) {
+        router.push("/");
+      } else {
+        setError(
+          "خطا در اعتبارسنجی داده ها" + JSON.stringify(result.errors).toString()
+        );
+      }
+    } catch {
+      setError("خطا در پردازش داده ها");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto p-10 my-20 rounded-md border-2 border-gray-200 w-fit">
@@ -31,6 +51,8 @@ export default function CheckoutPage() {
         <HiOutlineInformationCircle className="text-green-500 text-3xl" />
         اطلاعات را وارد کنید
       </h1>
+      {error && <p className="text-red-500 w-80 alert">{error}</p>}
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block mb-1">نام:</label>
@@ -84,7 +106,11 @@ export default function CheckoutPage() {
           <label className="block mb-1">انتخاب موقعیت مکانی:</label>
           <Map />
         </div>
-        <Button type="submit" className="flex justify-center w-full">
+        <Button
+          type="submit"
+          className="flex justify-center w-full"
+          disabled={loading}
+        >
           تایید نهایی
         </Button>
       </form>
