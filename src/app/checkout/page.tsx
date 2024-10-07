@@ -7,6 +7,7 @@ import { Button } from "@/src/components/ui/button";
 import Map from "@/src/components/ui/Map";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
+import { Alert, AlertTitle, AlertDescription } from "@/src/components/ui/alert";
 import { checkoutSchema } from "./checkoutSchema";
 import { processCheckout } from "./checkoutAction";
 
@@ -51,7 +52,12 @@ export default function CheckoutPage() {
         <HiOutlineInformationCircle className="text-green-500 text-3xl" />
         اطلاعات را وارد کنید
       </h1>
-      {error && <p className="text-red-500 w-80 alert">{error}</p>}
+      {error && (
+        <Alert className="mt-4 bg-white border-red-700 w-64 absolute left-0">
+          <AlertTitle className="bold text-red-700">خطا اعتبار سنجی</AlertTitle>
+          <AlertDescription>{error.valueOf()}</AlertDescription>
+        </Alert>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
