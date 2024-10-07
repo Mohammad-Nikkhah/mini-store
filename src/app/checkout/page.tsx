@@ -23,10 +23,7 @@ export default function CheckoutPage() {
   } = useForm({
     resolver: zodResolver(checkoutSchema),
   });
-
-  const onSubmit = (data: object) => {
-    console.log("اطلاعات ارسال شد:", data);
-  };
+  const onSubmit = () => {};
 
   return (
     <div className="container mx-auto p-10 my-20 rounded-md border-2 border-gray-200 w-fit">
