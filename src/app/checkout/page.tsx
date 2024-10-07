@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
-import Map from "@/src/components/ui/Map";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
 import { Alert, AlertTitle, AlertDescription } from "@/src/components/ui/alert";
@@ -22,11 +21,18 @@ export default function CheckoutPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = async (data: any) => {
+  type CheckoutFormData = {
+    name: string;
+    address: string;
+    postalCode: string;
+    city: string;
+  };
+
+  const onSubmit = async (data: CheckoutFormData) => {
     setLoading(true);
     setError(error);
 
@@ -53,7 +59,7 @@ export default function CheckoutPage() {
         اطلاعات را وارد کنید
       </h1>
       {error && (
-        <Alert className="mt-4 bg-white border-red-700 w-64 absolute left-0">
+        <Alert className="mt-4 bg-white border-red-700 w-60 absolute left-0">
           <AlertTitle className="bold text-red-700">خطا اعتبار سنجی</AlertTitle>
           <AlertDescription>{error.valueOf()}</AlertDescription>
         </Alert>
@@ -106,11 +112,6 @@ export default function CheckoutPage() {
           {errors.city && (
             <p className="text-red-500">{String(errors.city?.message)}</p>
           )}
-        </div>
-
-        <div>
-          <label className="block mb-1">انتخاب موقعیت مکانی:</label>
-          <Map />
         </div>
         <Button
           type="submit"

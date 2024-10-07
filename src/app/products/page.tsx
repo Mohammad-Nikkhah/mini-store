@@ -1,6 +1,13 @@
 import ProductsComponent from "./ProductsComponent";
 
-export default async function ProductsPage({ searchParams }: any) {
+interface SearchParams {
+  page?: string;
+}
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
   const currentPage = searchParams.page ? parseInt(searchParams.page) : 1;
   const productsPerPage = 8;
   const start = (currentPage - 1) * productsPerPage;

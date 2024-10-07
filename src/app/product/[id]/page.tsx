@@ -5,6 +5,14 @@ async function getProduct(id: string) {
   return res.json();
 }
 
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  image: string;
+}
+
 export default async function ProductPage({
   params,
 }: {
@@ -19,7 +27,7 @@ export async function generateStaticParams() {
   const res = await fetch("https://fakestoreapi.com/products");
   const products = await res.json();
 
-  return products.map((product: any) => ({
+  return products.map((product: Product) => ({
     id: product.id.toString(),
   }));
 }

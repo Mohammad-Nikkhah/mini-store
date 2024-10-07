@@ -1,8 +1,11 @@
 'use server';
 
 import {checkoutSchema} from './checkoutSchema';
+import z from 'zod';
 
-export async function processCheckout(data:any) {
+type CheckoutFormData = z.infer<typeof checkoutSchema>;
+
+export async function processCheckout(data: CheckoutFormData) {
   const result = checkoutSchema.safeParse(data);
 
   // test code :)
