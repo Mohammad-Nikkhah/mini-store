@@ -1,26 +1,31 @@
-'use server';
+"use server";
 
-import {checkoutSchema} from './checkoutSchema';
-import z from 'zod';
+import { checkoutSchema } from "./checkoutSchema";
 
-type CheckoutFormData = z.infer<typeof checkoutSchema>;
+export async function processCheckout(data: {
+  name: string;
+  address: string;
+  postalCode: string;
+  city: string;
+}) {
 
-export async function processCheckout(data: CheckoutFormData) {
-  const result = checkoutSchema.safeParse(data);
-
-  // test code :)
-  if (data.name === "mohammad") {
+  const parsedData = checkoutSchema.safeParse(data);
+  if (!parsedData.success) {
     return {
       success: false,
-      errors: {
-        name: "این نام مجاز نیست. لطفا نام دیگری وارد کنید.",
-      },
+      errors: parsedData.error.format(),
     };
   }
 
-  if(!result.success) {
-    return { success: false, errors: result.error.format() };
+  // test code
+  if (data.name === "mohammad") {
+    return {
+      success: false,
+      errors: { message: "نام 'mohammad' معتبر نیست. لطفاً نام دیگری وارد کنید." },
+    };
   }
-  console.log(result.data);
-  return { success: true }
+  const result = true; 
+  return result
+    ? { success: true }
+    : { success: false, errors: { message: "خطا در ذخیره‌سازی" } };
 }

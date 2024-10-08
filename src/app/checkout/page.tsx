@@ -1,29 +1,18 @@
 "use client";
-
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import { HiOutlineInformationCircle } from "react-icons/hi";
-
 import { Alert, AlertTitle, AlertDescription } from "@/src/components/ui/alert";
 import { checkoutSchema } from "./checkoutSchema";
 import { processCheckout } from "./checkoutAction";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
 export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CheckoutFormData>({
-    resolver: zodResolver(checkoutSchema),
-  });
+  const [success, setSuccess] = useState<boolean | null>(null);
 
   type CheckoutFormData = {
     name: string;
@@ -32,21 +21,28 @@ export default function CheckoutPage() {
     city: string;
   };
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CheckoutFormData>({
+    resolver: zodResolver(checkoutSchema),
+  });
+
   const onSubmit = async (data: CheckoutFormData) => {
     setLoading(true);
-    setError(error);
+    setError(null);
+    setSuccess(null);
 
     try {
       const result = await processCheckout(data);
       if (result.success) {
-        router.push("/");
+        setSuccess(true);
       } else {
-        setError(
-          "خطا در اعتبارسنجی داده ها" + JSON.stringify(result.errors).toString()
-        );
+        setError(JSON.stringify(result.errors));
       }
     } catch {
-      setError("خطا در پردازش داده ها");
+      setError("خطا در پردازش داده‌ها");
     } finally {
       setLoading(false);
     }
@@ -54,14 +50,22 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto p-10 my-20 rounded-md border-2 border-gray-200 w-fit">
-      <h1 className="text-xl font-bold mb-4 flex  justify-center gap-2 items-center text-center">
+      <h1 className="text-xl font-bold mb-4 flex justify-center gap-2 items-center text-center">
         <HiOutlineInformationCircle className="text-green-500 text-3xl" />
         اطلاعات را وارد کنید
       </h1>
+
       {error && (
         <Alert className="mt-4 bg-white border-red-700 w-60 absolute left-0">
-          <AlertTitle className="bold text-red-700">خطا اعتبار سنجی</AlertTitle>
-          <AlertDescription>{error.valueOf()}</AlertDescription>
+          <AlertTitle className="bold text-red-700">خطا</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert className="mt-4 bg-white border-green-700 w-60 absolute left-0">
+          <AlertTitle className="bold text-green-700">موفقیت</AlertTitle>
+          <AlertDescription>پردازش با موفقیت انجام شد</AlertDescription>
         </Alert>
       )}
 
@@ -74,7 +78,7 @@ export default function CheckoutPage() {
             className="border p-2 w-96"
           />
           {errors.name && (
-            <p className="text-red-500">{String(errors.name?.message)}</p>
+            <p className="text-red-500">{String(errors.name.message)}</p>
           )}
         </div>
 
@@ -86,7 +90,7 @@ export default function CheckoutPage() {
             className="border p-2 w-96"
           />
           {errors.address && (
-            <p className="text-red-500">{String(errors.address?.message)}</p>
+            <p className="text-red-500">{String(errors.address.message)}</p>
           )}
         </div>
 
@@ -98,7 +102,7 @@ export default function CheckoutPage() {
             className="border p-2 w-96"
           />
           {errors.postalCode && (
-            <p className="text-red-500">{String(errors.postalCode?.message)}</p>
+            <p className="text-red-500">{String(errors.postalCode.message)}</p>
           )}
         </div>
 
@@ -110,9 +114,10 @@ export default function CheckoutPage() {
             className="border p-2 w-96"
           />
           {errors.city && (
-            <p className="text-red-500">{String(errors.city?.message)}</p>
+            <p className="text-red-500">{String(errors.city.message)}</p>
           )}
         </div>
+
         <Button
           type="submit"
           className="flex justify-center w-full"
