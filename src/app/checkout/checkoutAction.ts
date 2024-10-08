@@ -1,31 +1,31 @@
-"use server";
+'use server';
 
-import { checkoutSchema } from "./checkoutSchema";
+import { checkoutSchema } from './checkoutSchema';
+import { ZodError } from 'zod';
 
-export async function processCheckout(data: {
-  name: string;
-  address: string;
-  postalCode: string;
-  city: string;
-}) {
+export async function processCheckout(currentState: { message: string }, formData: FormData): Promise<{ message: string }> {
+  const formValues = {
+    name: formData.get("name")?.toString() || '',
+    address: formData.get("address")?.toString() || '',
+    postalCode: formData.get("postalCode")?.toString() || '',
+    city: formData.get("city")?.toString() || '',
+  };
 
-  const parsedData = checkoutSchema.safeParse(data);
-  if (!parsedData.success) {
+  try {
+    const validatedData = checkoutSchema.parse(formValues);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return {
-      success: false,
-      errors: parsedData.error.format(),
+      message: ' با موفقیت ارسال شد',
+    };
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const errorMessage = error.errors.map((err) => err.message).join(", ");
+      return {
+        message: `خطا: ${errorMessage}`,
+      };
+    }
+    return {
+      message: 'خطایی در سرور رخ داده است.',
     };
   }
-
-  // test code
-  if (data.name === "mohammad") {
-    return {
-      success: false,
-      errors: { message: "نام 'mohammad' معتبر نیست. لطفاً نام دیگری وارد کنید." },
-    };
-  }
-  const result = true; 
-  return result
-    ? { success: true }
-    : { success: false, errors: { message: "خطا در ذخیره‌سازی" } };
 }
