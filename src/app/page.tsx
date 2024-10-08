@@ -12,9 +12,13 @@ export default async function Home() {
         />
       </div>
       <div className="mx-auto w-full flex justify-center my-10">
-        <Link href="/products">
+        <Link className="mx-2" href="/products">
           <FaArrowCircleDown className="animate-bounce mx-auto text-4xl mb-4 text-blue-900" />
           <Button> مشاهده لیست محصولات</Button>
+        </Link>
+        <Link className="mx-2" href="/categories">
+          <FaArrowCircleDown className="animate-bounce mx-auto text-4xl mb-4 text-blue-900" />
+          <Button>مشاهده دسته بندی ها</Button>
         </Link>
       </div>
     </div>

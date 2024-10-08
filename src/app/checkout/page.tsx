@@ -63,7 +63,9 @@ export default function CheckoutPage() {
         {formState?.message && (
           <Alert className="mt-4">
             <AlertTitle>پیغام</AlertTitle>
-            <AlertDescription>{formState.message}</AlertDescription>
+            <AlertDescription className="w-fit">
+              {formState.message}
+            </AlertDescription>
           </Alert>
         )}
       </form>
