@@ -12,7 +12,7 @@ export async function processCheckout(currentState: { message: string }, formDat
   };
 
   try {
-    const validatedData = checkoutSchema.parse(formValues);
+    checkoutSchema.parse(formValues);
     await new Promise((resolve) => setTimeout(resolve, 1000)); 
     return {
       message: ' با موفقیت ارسال شد',
