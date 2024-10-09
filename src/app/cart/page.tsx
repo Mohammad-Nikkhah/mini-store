@@ -2,7 +2,7 @@
 import { useCart } from "@/src/context/CartContext";
 import { Button } from "@/src/components/ui/button";
 import { BsFillBasketFill } from "react-icons/bs";
-import { Alert, AlertTitle, AlertDescription } from "@/src/components/ui/alert";
+import { Alert, AlertDescription } from "@/src/components/ui/alert";
 
 export default function CartPage() {
   const { cart, removeFromCart } = useCart();
