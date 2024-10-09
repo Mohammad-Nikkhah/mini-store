@@ -17,18 +17,7 @@ interface Product {
 }
 export default function ProductDetails({ product }: { product: Product }) {
   const { addToCart } = useCart();
-  const [showAlert, setShowAlert] = useState(false);
-  const handleAddToCart = () => {
-    addToCart({
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      quantity: 1,
-    });
-    setShowAlert(true);
-    setTimeout(() => setShowAlert(false), 3000);
-  };
-
+  const [showAlert] = useState(false);
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -43,7 +32,14 @@ export default function ProductDetails({ product }: { product: Product }) {
           <p className="mb-4 text-slate-400">{product.description}</p>
           <button
             className="bg-blue-900 text-white px-4 py-2 rounded-lg"
-            onClick={handleAddToCart}
+            onClick={() =>
+              addToCart({
+                id: product.id,
+                title: product.title,
+                price: product.price,
+                quantity: 1,
+              })
+            }
           >
             اضافه کردن به سبد
           </button>

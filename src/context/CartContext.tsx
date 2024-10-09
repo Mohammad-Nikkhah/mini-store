@@ -1,54 +1,117 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 
-interface CartItem {
+interface Product {
   id: number;
   title: string;
   price: number;
   quantity: number;
 }
 
+interface CartItem {
+  id: number;
+  date: string;
+  products: Product[];
+}
+
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: CartItem) => void;
+  totalCartItems: number;
+  addToCart: (item: Product) => void;
   removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  deleteCartFromAPI: (id: number) => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [totalCartItems, setTotalCartItems] = useState<number>(0);
 
-  const addToCart = (item: CartItem) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
-      if (existingItem) {
-        return prevCart.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        );
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch("https://fakestoreapi.com/carts/user/1");
+      const data: CartItem[] = await response.json();
+
+      if (data.length > 0) {
+        setCart(data);
+        const totalItems = data.reduce((acc, cart) => {
+          return (
+            acc +
+            cart.products.reduce(
+              (acc2: number, product: Product) => acc2 + product.quantity,
+              0
+            )
+          );
+        }, 0);
+        setTotalCartItems(totalItems);
+      } else {
+        setCart([]);
+        setTotalCartItems(0);
       }
-      return [...prevCart, { ...item, quantity: 1 }];
-    });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const removeFromCart = (id: number) => {
-    setCart((prevCart) => prevCart.filter((cartItem) => cartItem.id !== id));
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
+  const addToCart = async (item: Product) => {
+    try {
+      const response = await fetch("https://fakestoreapi.com/carts", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: 1,
+          date: new Date().toISOString(),
+          products: [
+            {
+              productId: item.id,
+              quantity: 1,
+            },
+          ],
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        console.log("محصول اضافه شد");
+        fetchCartItems();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
-    setCart((prevCart) =>
-      prevCart.map((cartItem) =>
-        cartItem.id === id ? { ...cartItem, quantity } : cartItem
-      )
-    );
+  const removeFromCart = async (id: number) => {
+    try {
+      await fetch(`https://fakestoreapi.com/carts/${id}`, {
+        method: "DELETE",
+      });
+      fetchCartItems();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQuantity }}
+      value={{
+        cart,
+        totalCartItems,
+        addToCart,
+        removeFromCart,
+        deleteCartFromAPI: removeFromCart,
+      }}
     >
       {children}
     </CartContext.Provider>

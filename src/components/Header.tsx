@@ -6,8 +6,7 @@ import { FaBasketShopping } from "react-icons/fa6";
 import MenuItems from "./MenuItems";
 
 export default function Header() {
-  const { cart } = useCart();
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const { totalCartItems } = useCart();
   return (
     <header className="bg-white border-b-2  text-white p-4">
       <div className="container mx-auto flex justify-between gap-20 items-center">
@@ -29,7 +28,7 @@ export default function Header() {
                 ali
                rounded-full h-5 w-5	items-center	"
               >
-                <span> {totalItems}</span>
+                <span> {totalCartItems}</span>
               </span>
               <FaBasketShopping className="text-2xl" />
             </span>{" "}
